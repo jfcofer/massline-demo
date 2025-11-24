@@ -19,7 +19,9 @@ const Logo: React.FC<LogoProps> = ({
   };
 
   const imagePath =
-    variant === 'massline' ? '/logo_massline.png' : '/logo_mototrack.png';
+    variant === 'massline'
+      ? `${import.meta.env.BASE_URL}logo_massline.png`
+      : `${import.meta.env.BASE_URL}logo_mototrack.png`;
   const altText =
     variant === 'massline' ? 'MASS LINE Logo' : 'MOTOTRACK Logo';
 

@@ -62,7 +62,7 @@ const OrderList: React.FC = () => {
           {filters.map(filter => (
             <button
               key={filter.id}
-              onClick={() => setSelectedFilter(filter.id as any)}
+              onClick={() => setSelectedFilter(filter.id as 'all' | 'urgent' | 'mine')}
               className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all ${
                 selectedFilter === filter.id
                   ? 'bg-blue-500 text-white shadow-md'

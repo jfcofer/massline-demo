@@ -87,7 +87,7 @@ const QueryModule: React.FC = () => {
             <button
               key={method.id}
               onClick={() => {
-                setSearchMethod(method.id as any);
+                setSearchMethod(method.id as 'text' | 'scan' | 'location');
                 if (method.id === 'scan') setShowScanner(true);
               }}
               className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all ${

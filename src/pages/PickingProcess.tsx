@@ -13,15 +13,18 @@ const PickingProcess: React.FC = () => {
 
   // Find the order
   const order = mockOrders.find(o => o.id === orderId);
-  if (!order) {
-    return <div>Order not found</div>;
-  }
 
-  const [items, setItems] = useState<PickingItem[]>(order.items);
+  // Initialize hooks before any early returns
+  const [items, setItems] = useState<PickingItem[]>(order?.items || []);
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
   const [showScanner, setShowScanner] = useState(false);
   const [scanStep, setScanStep] = useState<ScanStep>(null);
   const [quantity, setQuantity] = useState(0);
+
+  // Check if order exists after hooks are initialized
+  if (!order) {
+    return <div>Order not found</div>;
+  }
 
   const currentItem = items[currentItemIndex];
   const completedItems = items.filter(item => item.status === 'picked').length;

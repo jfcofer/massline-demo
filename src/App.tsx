@@ -5,7 +5,23 @@ import { useAuthStore } from './stores/authStore';
 // Pages
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+
+// Receiving Flow (M3-M6)
 import ReceptionStart from './pages/ReceptionStart';
+import ProductScanning from './pages/ProductScanning';
+import LocationAssignment from './pages/LocationAssignment';
+import ReceptionConfirmation from './pages/ReceptionConfirmation';
+
+// Dispatch Flow (M7-M10)
+import OrderList from './pages/OrderList';
+import PickingProcess from './pages/PickingProcess';
+import Packing from './pages/Packing';
+import DispatchConfirmation from './pages/DispatchConfirmation';
+
+// Query & Profile (M11-M12)
+import QueryModule from './pages/QueryModule';
+import Profile from './pages/Profile';
+
 import ComingSoon from './pages/ComingSoon';
 
 function App() {
@@ -32,47 +48,90 @@ function App() {
           }
         />
 
+        {/* Receiving Flow */}
         <Route
-          path="/reception"
+          path="/reception/start"
           element={
             <ProtectedRoute>
               <ReceptionStart />
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/reception/scan"
           element={
             <ProtectedRoute>
-              <ComingSoon
-                title="Escaneo de Productos"
-                description="La funcionalidad de escaneo de productos está en desarrollo. Pronto podrás registrar productos escaneando códigos QR."
-              />
+              <ProductScanning />
             </ProtectedRoute>
           }
         />
-
         <Route
-          path="/dispatch"
+          path="/reception/location-assignment"
           element={
             <ProtectedRoute>
-              <ComingSoon
-                title="Módulo de Despacho"
-                description="El módulo de despacho está en desarrollo. Aquí podrás gestionar órdenes de picking y preparación de envíos."
-              />
+              <LocationAssignment />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reception/confirmation"
+          element={
+            <ProtectedRoute>
+              <ReceptionConfirmation />
             </ProtectedRoute>
           }
         />
 
+        {/* Dispatch Flow */}
+        <Route
+          path="/dispatch/orders"
+          element={
+            <ProtectedRoute>
+              <OrderList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dispatch/picking/:orderId"
+          element={
+            <ProtectedRoute>
+              <PickingProcess />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dispatch/packing/:orderId"
+          element={
+            <ProtectedRoute>
+              <Packing />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dispatch/confirmation/:orderId"
+          element={
+            <ProtectedRoute>
+              <DispatchConfirmation />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Query Module */}
         <Route
           path="/query"
           element={
             <ProtectedRoute>
-              <ComingSoon
-                title="Consulta Rápida"
-                description="La funcionalidad de consulta rápida está en desarrollo. Pronto podrás buscar productos y ubicaciones al instante."
-              />
+              <QueryModule />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Profile */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           }
         />

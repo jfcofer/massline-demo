@@ -26,7 +26,6 @@ const ReceptionStart: React.FC = () => {
   const recentSuppliers = [
     'AutoParts Supply Co.',
     'Mega Repuestos S.A.',
-    'Import Motors Ltd.',
   ];
 
   const handleSearch = async () => {
@@ -136,7 +135,7 @@ const ReceptionStart: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="p-5 space-y-6 pb-24">
+      <div className="p-5 space-y-6 pb-44">
         {/* Order Type Selection */}
         <div>
           <h4 className="text-h5 font-semibold text-text-primary mb-3">
@@ -324,7 +323,7 @@ const ReceptionStart: React.FC = () => {
       )}
 
       {/* Footer Actions */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border-light p-5 space-y-3">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border-light p-2 space-y-3">
         <Button
           variant="primary"
           size="lg"

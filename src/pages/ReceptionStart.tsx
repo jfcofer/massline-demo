@@ -4,6 +4,7 @@ import { ArrowLeft, QrCode, Search, HelpCircle, AlertCircle } from 'lucide-react
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Card from '../components/ui/Card';
+import { QRScannerWrapper } from '../components/scanner';
 import { mockApi } from '../services/mockApi';
 
 const ReceptionStart: React.FC = () => {
@@ -74,10 +75,19 @@ const ReceptionStart: React.FC = () => {
     }
   };
 
-  const simulateQRScan = () => {
-    // Simulate QR scan with a valid order
-    setOrderNumber('OC-2025-001234');
+  const handleQRScan = (scannedCode: string) => {
+    // El scanner devuelve el texto del QR
+    // Puede ser: "OC-2025-001234" o "SS:O:OC-2025-001234"
+
+    // Si tiene prefijo SS:O:, lo removemos
+    const cleanCode = scannedCode.startsWith('SS:O:')
+      ? scannedCode.replace('SS:O:', '')
+      : scannedCode;
+
+    setOrderNumber(cleanCode);
     setShowQRScanner(false);
+
+    // Auto-buscar la orden después de escanear
     setTimeout(() => {
       handleSearch();
     }, 500);
@@ -287,39 +297,15 @@ const ReceptionStart: React.FC = () => {
         </div>
       </div>
 
-      {/* QR Scanner Modal */}
+      {/* QR Scanner - Usa cámara real */}
       {showQRScanner && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex flex-col items-center justify-center p-5">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
-            <h3 className="text-h4 font-semibold text-center mb-4">
-              Escanear QR
-            </h3>
-            <div className="aspect-square bg-bg-tertiary rounded-xl mb-4 flex items-center justify-center">
-              <QrCode className="h-24 w-24 text-text-tertiary" />
-            </div>
-            <p className="text-center text-text-secondary mb-6">
-              Apunte la cámara al código QR de la orden
-            </p>
-            <div className="space-y-3">
-              <Button
-                variant="primary"
-                size="lg"
-                fullWidth
-                onClick={simulateQRScan}
-              >
-                Simular Escaneo (Demo)
-              </Button>
-              <Button
-                variant="secondary"
-                size="lg"
-                fullWidth
-                onClick={() => setShowQRScanner(false)}
-              >
-                Cancelar
-              </Button>
-            </div>
-          </div>
-        </div>
+        <QRScannerWrapper
+          onScan={handleQRScan}
+          onClose={() => setShowQRScanner(false)}
+          title="Escanear Orden"
+          subtitle="Apunta al código QR de la orden de compra"
+          expectedType="order"
+        />
       )}
 
       {/* Footer Actions */}

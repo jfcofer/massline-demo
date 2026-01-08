@@ -4,7 +4,12 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  
   base: '/massline-demo/',
+  server: {
+    host: true, // Expone en la red local (0.0.0.0)
+    port: 5173,
+  },
   plugins: [
     react(),
     VitePWA({

@@ -26,7 +26,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({
     const scannerId = 'qr-reader';
 
     // Create scanner instance
-    const scanner = new Html5Qrcode(scannerId);
+    const scanner = new Html5Qrcode(scannerId, { verbose: false });
     scannerRef.current = scanner;
 
     const startScanner = async () => {
@@ -35,8 +35,9 @@ export const QRScanner: React.FC<QRScannerProps> = ({
           { facingMode },
           {
             fps: 10,
-            qrbox: { width: 250, height: 250 },
+            qrbox: undefined, // Sin marco interno - usamos nuestro propio overlay
             aspectRatio: 1,
+            disableFlip: false,
           },
           (decodedText) => {
             // Prevent multiple scans
@@ -121,32 +122,30 @@ export const QRScanner: React.FC<QRScannerProps> = ({
       </div>
 
       {/* Scanner Area */}
-      <div className="flex-1 relative flex items-center justify-center">
+      <div className="flex-1 relative overflow-hidden">
         {error ? (
-          <div className="text-center p-6">
-            <Camera className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-            <p className="text-red-400 text-base mb-4">{error}</p>
-            <button
-              onClick={onClose}
-              className="bg-primary text-white px-6 py-3 rounded-lg font-medium"
-            >
-              Cerrar
-            </button>
+          <div className="h-full flex items-center justify-center">
+            <div className="text-center p-6">
+              <Camera className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+              <p className="text-red-400 text-base mb-4">{error}</p>
+              <button
+                onClick={onClose}
+                className="bg-primary text-white px-6 py-3 rounded-lg font-medium"
+              >
+                Cerrar
+              </button>
+            </div>
           </div>
         ) : (
-          <>
-            {/* QR Reader Container */}
+          <div className="relative h-full">
+            {/* QR Reader Container - toma todo el espacio */}
             <div
               id="qr-reader"
-              className="w-full max-w-sm mx-4"
-              style={{
-                borderRadius: '16px',
-                overflow: 'hidden',
-              }}
+              className="absolute inset-0"
             />
 
-            {/* Scanning Frame Overlay */}
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+            {/* Scanning Frame Overlay - centrado sobre el video */}
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-10">
               <div className="w-64 h-64 border-2 border-white/30 rounded-2xl relative">
                 {/* Corner accents */}
                 <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary rounded-tl-xl" />
@@ -158,7 +157,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({
                 <div className="absolute left-2 right-2 h-0.5 bg-primary animate-pulse top-1/2" />
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
 

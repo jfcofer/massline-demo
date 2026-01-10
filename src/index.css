@@ -89,3 +89,20 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* QR Scanner - forzar que el video ocupe todo el contenedor */
+#qr-reader {
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+}
+
+#qr-reader video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+#qr-reader > div {
+  display: none !important; /* Ocultar controles internos de html5-qrcode */
+}

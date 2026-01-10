@@ -7,6 +7,7 @@ interface QRScannerProps {
   onClose: () => void;
   title?: string;
   subtitle?: string;
+  expectedType?: 'product' | 'location' | 'order';
 }
 
 export const QRScanner: React.FC<QRScannerProps> = ({
@@ -14,6 +15,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({
   onClose,
   title = 'Escanear Código QR',
   subtitle = 'Apunta la cámara al código QR',
+  expectedType,
 }) => {
   const [error, setError] = useState<string | null>(null);
   const [isFlashOn, setIsFlashOn] = useState(false);
@@ -104,6 +106,31 @@ export const QRScanner: React.FC<QRScannerProps> = ({
     setFacingMode(prev => prev === 'environment' ? 'user' : 'environment');
   };
 
+  // Simular escaneo para desarrollo
+  const simulateScan = async () => {
+    if (hasScannedRef.current) return;
+    hasScannedRef.current = true;
+
+    // Generar código según el tipo esperado
+    let mockCode = 'MOCK-CODE';
+    if (expectedType === 'product') {
+      mockCode = 'REP-12345'; // Filtro de Aceite XYZ
+    } else if (expectedType === 'location') {
+      mockCode = 'A-03-E2-N1';
+    } else if (expectedType === 'order') {
+      mockCode = 'OC-2025-001234';
+    }
+
+    if (navigator.vibrate) {
+      navigator.vibrate(200);
+    }
+
+    if (scannerRef.current?.isScanning) {
+      await scannerRef.current.stop().catch(console.error);
+    }
+    onScan(mockCode);
+  };
+
   return (
     <div className="fixed inset-0 bg-black z-50 flex flex-col">
       {/* Header */}
@@ -163,25 +190,35 @@ export const QRScanner: React.FC<QRScannerProps> = ({
 
       {/* Controls */}
       {!error && (
-        <div className="flex justify-center gap-8 pb-12 pt-4 bg-black/80">
-          {hasFlash && (
+        <div className="flex flex-col items-center gap-4 pb-12 pt-4 bg-black/80">
+          {/* Botón de simular - solo desarrollo */}
+          <button
+            onClick={simulateScan}
+            className="px-6 py-3 bg-yellow-500 text-black font-bold rounded-xl active:scale-95 transition-transform"
+          >
+            SIMULAR ESCANEO
+          </button>
+
+          <div className="flex justify-center gap-8">
+            {hasFlash && (
+              <button
+                onClick={toggleFlash}
+                className="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center active:scale-95 transition-transform"
+              >
+                {isFlashOn ? (
+                  <Flashlight className="w-6 h-6 text-yellow-400" />
+                ) : (
+                  <FlashlightOff className="w-6 h-6 text-white" />
+                )}
+              </button>
+            )}
             <button
-              onClick={toggleFlash}
+              onClick={switchCamera}
               className="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center active:scale-95 transition-transform"
             >
-              {isFlashOn ? (
-                <Flashlight className="w-6 h-6 text-yellow-400" />
-              ) : (
-                <FlashlightOff className="w-6 h-6 text-white" />
-              )}
+              <SwitchCamera className="w-6 h-6 text-white" />
             </button>
-          )}
-          <button
-            onClick={switchCamera}
-            className="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center active:scale-95 transition-transform"
-          >
-            <SwitchCamera className="w-6 h-6 text-white" />
-          </button>
+          </div>
         </div>
       )}
     </div>

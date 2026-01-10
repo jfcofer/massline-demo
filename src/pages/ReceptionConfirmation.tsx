@@ -37,23 +37,23 @@ const ReceptionConfirmation: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 text-center sticky top-0 z-10">
-        <h1 className="text-lg font-bold text-gray-900">Resumen de Recepción</h1>
-      </div>
+        <div className="bg-white border-b border-gray-200 px-4 py-3 text-center sticky top-0 z-10">
+          <h1 className="text-lg font-bold text-gray-900">Resumen de Recepción</h1>
+        </div>
 
-      {/* Stepper */}
-      <Stepper
-        steps={[
-          { label: 'Inicio' },
-          { label: 'Escaneo' },
-          { label: 'Ubicación' },
-          { label: 'Confirmar' },
-        ]}
-        currentStep={3}
-      />
+        {/* Stepper */}
+        <Stepper
+          steps={[
+            { label: 'Inicio' },
+            { label: 'Escaneo' },
+            { label: 'Ubicación' },
+            { label: 'Confirmar' },
+          ]}
+          currentStep={3}
+        />
 
-      {/* Content */}
-      <div className="flex-1 p-4 pb-28 overflow-y-auto">
+        {/* Content */}
+        <div className="flex-1 p-4 pb-32 overflow-y-auto">
         {/* Success Animation */}
         <div className="flex flex-col items-center py-8 mb-6">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4 animate-bounce">

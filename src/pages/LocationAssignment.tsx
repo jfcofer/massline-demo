@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search } from 'lucide-react';
 import Stepper from '../components/navigation/Stepper';
 import { LocationSuggestion } from '../components/location/LocationSuggestion';
-import MockQRScanner from '../components/scanner/MockQRScanner';
+import { QRScannerWrapper } from '../components/scanner';
 import Button from '../components/ui/Button';
 import { mockLocations } from '../data/mockData';
 
@@ -61,14 +61,22 @@ const LocationAssignment: React.FC = () => {
   const handleScan = (qrCode: string) => {
     setShowScanner(false);
 
-    // Parse location QR (format: SS:L:{LOCATION_CODE})
-    const parts = qrCode.split(':');
-    if (parts[0] !== 'SS' || parts[1] !== 'L') {
-      alert('Código QR inválido');
-      return;
+    // El QR puede ser:
+    // - Formato con prefijo: "SS:L:A-03-E2-N1"
+    // - Formato simple: "A-03-E2-N1"
+    let scannedCode = qrCode;
+
+    // Si tiene prefijo SS:L:, lo removemos
+    if (qrCode.startsWith('SS:L:')) {
+      scannedCode = qrCode.replace('SS:L:', '');
     }
 
-    const scannedCode = parts[2];
+    // Validar que parece un código de ubicación (formato: X-XX-XX-XX)
+    const locationPattern = /^[A-Z]-\d{2}-E\d-N\d$/;
+    if (!locationPattern.test(scannedCode)) {
+      alert('Código QR inválido. Se esperaba una ubicación (ej: A-03-E2-N1)');
+      return;
+    }
 
     if (scannedCode === suggestedLocation.code) {
       // Correct location scanned
@@ -111,30 +119,30 @@ const LocationAssignment: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-10">
-        <button
-          onClick={() => navigate(-1)}
-          className="w-10 h-10 flex items-center justify-center active:scale-95 transition-transform"
-        >
-          <ArrowLeft className="w-6 h-6 text-gray-700" />
-        </button>
-        <h1 className="text-lg font-bold text-gray-900">Ubicación de Productos</h1>
-        <div className="w-10" />
-      </div>
+        <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-10">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 flex items-center justify-center active:scale-95 transition-transform"
+          >
+            <ArrowLeft className="w-6 h-6 text-gray-700" />
+          </button>
+          <h1 className="text-lg font-bold text-gray-900">Ubicación de Productos</h1>
+          <div className="w-10" />
+        </div>
 
-      {/* Stepper */}
-      <Stepper
-        steps={[
-          { label: 'Inicio' },
-          { label: 'Escaneo' },
-          { label: 'Ubicación' },
-          { label: 'Confirmar' },
-        ]}
-        currentStep={2}
-      />
+        {/* Stepper */}
+        <Stepper
+          steps={[
+            { label: 'Inicio' },
+            { label: 'Escaneo' },
+            { label: 'Ubicación' },
+            { label: 'Confirmar' },
+          ]}
+          currentStep={2}
+        />
 
-      {/* Content */}
-      <div className="flex-1 p-4 pb-28 overflow-y-auto">
+        {/* Content */}
+        <div className="flex-1 p-4 pb-44 overflow-y-auto">
         {/* Product Counter */}
         <div className="text-center mb-4">
           <p className="text-sm text-gray-500">
@@ -230,9 +238,11 @@ const LocationAssignment: React.FC = () => {
 
       {/* Scanner Modal */}
       {showScanner && (
-        <MockQRScanner
+        <QRScannerWrapper
           onScan={handleScan}
           onClose={() => setShowScanner(false)}
+          title="Escanear Ubicación"
+          subtitle="Apunta al código QR de la estantería"
           expectedType="location"
         />
       )}

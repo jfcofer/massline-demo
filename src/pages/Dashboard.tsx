@@ -14,7 +14,9 @@ import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import Logo from '../components/ui/Logo';
 import Spinner from '../components/ui/Spinner';
+import SyncStatus from '../components/ui/SyncStatus';
 import { useAuthStore } from '../stores/authStore';
+import { useOfflineSync } from '../hooks';
 import { mockApi } from '../services/mockApi';
 import {
   formatRelativeTime,
@@ -26,6 +28,7 @@ import type { DashboardStats, Task } from '../types';
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
+  const { isOnline, pendingCount, isSyncing, syncNow } = useOfflineSync();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -128,10 +131,27 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-bg-secondary pb-20">
+      {/* Sync Status Bar - solo muestra si hay algo relevante */}
+      <SyncStatus
+        isOnline={isOnline}
+        pendingCount={pendingCount}
+        isSyncing={isSyncing}
+        onSyncClick={syncNow}
+        variant="bar"
+      />
+
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white shadow-sm px-5 py-4 flex items-center justify-between">
         <Logo variant="massline" size="sm" />
         <div className="flex items-center gap-3">
+          {/* Sync Status Badge */}
+          <SyncStatus
+            isOnline={isOnline}
+            pendingCount={pendingCount}
+            isSyncing={isSyncing}
+            onSyncClick={syncNow}
+            variant="badge"
+          />
           <button className="relative touch-target flex items-center justify-center">
             <Bell className="h-6 w-6 text-text-secondary" />
             {stats && stats.lowStockAlerts > 0 && (

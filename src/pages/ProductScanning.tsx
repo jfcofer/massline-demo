@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Camera, Search, ChevronDown, Plus, Minus, Edit, Trash2, MoreVertical } from 'lucide-react';
 import Stepper from '../components/navigation/Stepper';
-import MockQRScanner from '../components/scanner/MockQRScanner';
+import { QRScannerWrapper } from '../components/scanner';
 import Button from '../components/ui/Button';
 import { mockProducts } from '../data/mockData';
 
@@ -33,14 +33,16 @@ const ProductScanning: React.FC = () => {
   const handleScan = (qrCode: string) => {
     setShowScanner(false);
 
-    // Parse QR code (format: SS:P:{SKU})
-    const parts = qrCode.split(':');
-    if (parts[0] !== 'SS' || parts[1] !== 'P') {
-      alert('Código QR inválido');
-      return;
+    // El QR puede ser:
+    // - Formato con prefijo: "SS:P:REP-12345"
+    // - Formato simple: "REP-12345"
+    let sku = qrCode;
+
+    // Si tiene prefijo SS:P:, lo removemos
+    if (qrCode.startsWith('SS:P:')) {
+      sku = qrCode.replace('SS:P:', '');
     }
 
-    const sku = parts[2];
     const product = mockProducts.find(p => p.sku === sku);
 
     if (product) {
@@ -97,32 +99,32 @@ const ProductScanning: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-10">
-        <button
-          onClick={() => navigate(-1)}
-          className="w-10 h-10 flex items-center justify-center active:scale-95 transition-transform"
-        >
-          <ArrowLeft className="w-6 h-6 text-gray-700" />
-        </button>
-        <h1 className="text-lg font-bold text-gray-900">Recepción - Orden #12345</h1>
-        <button className="w-10 h-10 flex items-center justify-center">
-          <MoreVertical className="w-6 h-6 text-gray-500" />
-        </button>
-      </div>
+        <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-10">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 flex items-center justify-center active:scale-95 transition-transform"
+          >
+            <ArrowLeft className="w-6 h-6 text-gray-700" />
+          </button>
+          <h1 className="text-lg font-bold text-gray-900">Recepción - Orden #12345</h1>
+          <button className="w-10 h-10 flex items-center justify-center">
+            <MoreVertical className="w-6 h-6 text-gray-500" />
+          </button>
+        </div>
 
-      {/* Stepper */}
-      <Stepper
-        steps={[
-          { label: 'Inicio' },
-          { label: 'Escaneo' },
-          { label: 'Ubicación' },
-          { label: 'Confirmar' },
-        ]}
-        currentStep={1}
-      />
+        {/* Stepper */}
+        <Stepper
+          steps={[
+            { label: 'Inicio' },
+            { label: 'Escaneo' },
+            { label: 'Ubicación' },
+            { label: 'Confirmar' },
+          ]}
+          currentStep={1}
+        />
 
-      {/* Content */}
-      <div className="flex-1 p-4 pb-24 overflow-y-auto">
+        {/* Content */}
+        <div className="flex-1 p-4 pb-44 overflow-y-auto">
         {/* Expected Products (Collapsible) */}
         <div className="bg-white rounded-xl shadow-sm mb-4 overflow-hidden">
           <button
@@ -299,7 +301,10 @@ const ProductScanning: React.FC = () => {
           </span>
         </div>
         <div className="flex gap-3">
-          <button className="flex-1 py-3 border-2 border-blue-500 text-blue-600 font-bold rounded-xl active:scale-95 transition-transform flex items-center justify-center gap-2">
+          <button
+            onClick={() => setShowScanner(true)}
+            className="flex-1 py-3 border-2 border-blue-500 text-blue-600 font-bold rounded-xl active:scale-95 transition-transform flex items-center justify-center gap-2"
+          >
             <Plus className="w-5 h-5" />
             <span>Agregar más</span>
           </button>
@@ -316,9 +321,11 @@ const ProductScanning: React.FC = () => {
 
       {/* Scanner Modal */}
       {showScanner && (
-        <MockQRScanner
+        <QRScannerWrapper
           onScan={handleScan}
           onClose={() => setShowScanner(false)}
+          title="Escanear Producto"
+          subtitle="Apunta al código QR del producto"
           expectedType="product"
         />
       )}

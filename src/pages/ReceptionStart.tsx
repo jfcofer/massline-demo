@@ -94,7 +94,7 @@ const ReceptionStart: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-bg-secondary">
+    <div className="min-h-screen bg-bg-secondary flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white shadow-sm px-5 py-4 flex items-center justify-between">
         <button

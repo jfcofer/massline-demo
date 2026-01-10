@@ -61,6 +61,7 @@ export const QRScannerWrapper: React.FC<QRScannerWrapperProps> = ({
       onClose={onClose}
       title={title}
       subtitle={subtitle}
+      expectedType={expectedType}
     />
   );
 };
